@@ -1,0 +1,15 @@
+opam-version: "2.0"
+name: "as8"
+version: "0.1"
+synopsis: "CHIP8 assembler"
+description: """
+Reliable assembler and tool-chain for CHIP8 assembly language.
+"""
+maintainer: "Arthur Correnson <arthur.correnson@gmail.com>"
+authors: "Arthur Correnson <arthur.correnson@gmail.com>"
+license: "MIT"
+homepage: "https://github.com/jdrprod/as8"
+bug-reports: "https://github.com/jdrprod/as8/issues"
+dev-repo: "git+https://github.com/jdrprod/as8.git"
+depends: [ "ocaml" "ocamlfind" "cmdliner" ]
+build: ["dune" "build" "-p" name "-j" jobs]
