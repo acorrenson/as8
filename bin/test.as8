@@ -1,0 +1,5 @@
+ADD V1, V2
+label:
+  ADD V5 , V1
+  ADD V0 , V1
+  JP label

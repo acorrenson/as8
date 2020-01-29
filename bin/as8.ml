@@ -1,4 +1,5 @@
 open Cmdliner
+open Lib_as8.Assembler
 
 let input =
   let doc = "a CHIP8 assembly file" in
@@ -6,7 +7,7 @@ let input =
   Arg.(required & pos 0 (some file) None & info [] ~doc ~docv)
 
 let build file =
-  print_endline file
+  assembler file
 
 let cmd_run =
   let doc = "build a CHIP8 assembly file" in
