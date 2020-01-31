@@ -1,3 +1,4 @@
+(** Type for the standard set of CHIP8 instructions *)
 type standard_set =
   (* SYSTEM *)
   | CLS
@@ -15,7 +16,7 @@ type standard_set =
   | SNE_V_C  of int * int
   | SNE_V_V  of int * int
   | SKP_V    of int
-  | SKNP     of int
+  | SKNP_V   of int
 
 
   (* LOAD *)
@@ -63,3 +64,16 @@ type standard_set =
   | LD_HF_V of int
   | LD_R_V of int
   | LD_V_R of int
+
+
+exception OutOfBound of string
+
+let adress i =
+  if 0 <= i && i <= 0xFFF
+  then i
+  else raise (OutOfBound ("Adress " ^ (string_of_int i) ^ " is out of bound"))
+
+let constant i =
+  if 0 <= i && i <= 0xFF
+  then i
+  else raise (OutOfBound ("Constant " ^ (string_of_int i) ^ " is out of bound"))

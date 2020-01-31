@@ -1,11 +1,26 @@
 open Parser
-open Instructions_processing
 open Lexing
+open Instructions_processing
+open Instructions
 
 let print_position outx lexbuf =
   let pos = lexbuf.lex_curr_p in
   Printf.fprintf outx "%s:%d:%d" pos.pos_fname
     pos.pos_lnum (pos.pos_cnum - pos.pos_bol + 1)
+
+let compute_addresses il =
+  let rec step l pc adt =
+    match l with
+    | [] -> adt
+    | (LABEL l)::r ->
+      begin
+        match List.find_opt (fun (l', _) -> l' = l) adt with
+        | Some _ -> failwith "overwriting label"
+        | None -> step r pc ((l, pc)::adt)
+      end
+    | _::r -> step r (pc + 2) adt
+  in
+  step il 0 []
 
 let assembler file =
   let inx = open_in file in
@@ -26,5 +41,6 @@ let assembler file =
 
   (* PASS - 1 *)
   let adresses_table = compute_addresses !instructions in
+  (* PASS - 2 *)
   List.iter (process_standard_instruction adresses_table) !instructions
 

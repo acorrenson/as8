@@ -12,20 +12,6 @@ let opcode_x_kk base x kk =
 let opcode_x base x =
   base lor x
 
-let compute_addresses il =
-  let rec step l pc adt =
-    match l with
-    | [] -> adt
-    | (LABEL l)::r ->
-      begin
-        match List.find_opt (fun (l', _) -> l' = l) adt with
-        | Some _ -> failwith "overwriting label"
-        | None -> step r pc ((l, pc)::adt)
-      end
-    | _::r -> step r (pc + 2) adt
-  in
-  step il 0 []
-
 let print_hex x = Printf.printf "%#04x\n" x
 
 let process_standard_instruction adt i =
@@ -45,7 +31,7 @@ let process_standard_instruction adt i =
   | SNE_V_C (x, kk) -> opcode_x_kk 0x4000 x kk |> print_hex
   | SNE_V_V (x, y) -> opcode_x_y 0x9000 x y |> print_hex
   | SKP_V x -> opcode_x 0xE09E x |> print_hex
-  | SKNP x -> opcode_x 0xE0A1 x |> print_hex
+  | SKNP_V x -> opcode_x 0xE0A1 x |> print_hex
 
   (* LOAD *)
   | LD_V_V (x, y) -> opcode_x_y 0x8000 x y |> print_hex
