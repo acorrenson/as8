@@ -7,6 +7,6 @@
 
 (executable 
   (name debug)
-  (public_name debug)
+  (public_name as8.debug)
   (libraries lib_as8)
   (modules debug))
