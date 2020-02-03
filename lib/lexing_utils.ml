@@ -22,15 +22,18 @@ type source_line = {
   comments : string list;
 }
 
+let print_pos outx p = Printf.fprintf outx "(pos:%d)[%s]" p.pos p.text
+
+
 let print_token t =
   match t with
-  | SYM (_, s) -> print_endline ("SYM = " ^ s)
-  | CMT (_, s) -> print_endline ("CMT = " ^ s)
-  | TAG (_, s) -> print_endline ("TAG = " ^ s)
-  | COM _ -> print_endline ","
-  | DIR (_, s) -> print_endline ("DIR = " ^ s)
-  | CST (_, i) -> print_endline ("CST = " ^ (string_of_int i))
-  | REG (_, i) -> print_endline ("REG = " ^ (string_of_int i))
+  | SYM (p, s) -> Printf.printf "SYM = %-10s %a\n" s print_pos p
+  | CMT (p, s) -> Printf.printf "CMT = %-10s %a\n" s print_pos p
+  | TAG (p, s) -> Printf.printf "TAG = %-10s %a\n" s print_pos p
+  | COM _ -> Printf.printf ",\n"
+  | DIR (p, s) -> Printf.printf "DIR = %-10s %a\n" s print_pos p
+  | CST (p, i) -> Printf.printf "CST = %-10d %a\n" i print_pos p
+  | REG (p, i) -> Printf.printf "REG = %-10d %a\n" i print_pos p
 
 
 let int_of_hex c =

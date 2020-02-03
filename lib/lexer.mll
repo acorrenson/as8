@@ -5,8 +5,8 @@
   exception Eof
 
   let pos lexbuf = {
-    pos = (lexbuf.lex_curr_p.pos_cnum - lexbuf.lex_curr_p.pos_bol);
-    text = "";
+    pos = lexeme_start lexbuf;
+    text = lexeme lexbuf;
   }
 }
 
