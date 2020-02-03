@@ -33,17 +33,17 @@
 
 let dig = ['0' - '9' 'A'-'F']
 let reg = 'V' dig
-let adr = dig dig dig
-let cst = dig dig
-let lab =  ['a'-'z' 'A'-'Z' '-']['a'-'z' 'A'-'Z' '-']*
+let adr = dig dig* dig*
+let cst = dig dig*
+let lab =  ['a'-'z' 'A'-'Z' '_' '0'-'9']['a'-'z' 'A'-'Z' '_' '0'-'9']*
 let white = [' ' '\t']*
 let line = '\n'
+let word = dig dig* dig* dig*
 
 rule instruction = parse
 
   | ';' [^ '\n']+ '\n' {
     next_line lexbuf;
-    Printf.printf "COMMENT\n";
     instruction lexbuf
   }
 
@@ -56,85 +56,69 @@ rule instruction = parse
   }
 
   | lab as l white ':' {
-    Printf.printf "LABEL\n";
     LABEL l
   }
 
   | "ADD" white (reg as x)  white ',' white (reg  as y) {
-    Printf.printf "ADD\n";
     ADD_V_V (int_of_hex x.[1], int_of_hex y.[1])
   }
 
   | "ADD" white (reg as x)  white ',' white (cst as c) {
-    Printf.printf "ADD\n";
     ADD_V_C (int_of_hex x.[1], hex c)
   }
 
   | "ADD" white "I" white ',' white (reg as r) {
-    Printf.printf "ADD\n";
     ADD_I_V (int_of_hex r.[1])
   }
 
-  | "SUB" (reg as x) white ',' white (reg as y) {
-    Printf.printf "SUB\n";
+  | "SUB" white (reg as x) white ',' white (reg as y) {
     SUB_V_V (int_of_hex x.[1], int_of_hex y.[1])
   }
 
   | "SUBN" (reg as x) white ',' white (reg as y) {
-    Printf.printf "SUB\n";
     SUBN_V_V (int_of_hex x.[1], int_of_hex y.[1])
   }
 
   | "JP" white (lab as l) {
-    print_endline "JP";
     PJP_A l
   }
 
-  | line  { print_endline "nl"; next_line lexbuf; instruction lexbuf }
+  | line  { next_line lexbuf; instruction lexbuf }
   | white { instruction lexbuf }
 
   | "CLS" {
-    Printf.printf "CLS\n";
     CLS
   }
   
   | "RET" {
-    Printf.printf "RET\n";
     RET
   }
   
   | "SYS" white (adr as a) {
-    Printf.printf "SYS\n";
     SYS (hex a)
   }
 
   | "SYS" white (lab as l) {
-    Printf.printf "SYS\n";
     PSYS_A l
   }
 
   | "CALL" white (adr as a) {
-    Printf.printf "SYS\n";
     CALL_A (hex a)
   }
 
   | "CALL" white (lab as l) {
-    Printf.printf "SYS\n";
     PCALL_A l
   }
   
   | "JP" white (adr as a) {
-    Printf.printf "JP\n";
     JP_A (hex a)
   }
   
   | "JP" "V0" (adr as a) {
-    Printf.printf "JP\n";
     JP_V0_A (hex a)
   }
 
   | "JP" "V0" (lab as l) {
-    Printf.printf "JP\n";
     PJP_V0_A l
   }
   
@@ -204,13 +188,23 @@ rule instruction = parse
     LD_B_V (int_of_hex r.[1])
   }
 
-  | "LD" white "[I]" ',' white (reg as r) {
+  | "LD" white "[I]" white ',' white (reg as r) {
     LD_II_V (int_of_hex r.[1])
   }
 
-  | "LD"  white (reg as r) ',' white "[I]" {
+  | "LD"  white (reg as r) white ',' white "[I]" {
     LD_V_II (int_of_hex r.[1])
   }
+
+  | "DRW" white (reg as r1) white ',' white (reg as r2) white ',' white (dig as n) {
+    DRW_V_V_N (int_of_hex r1.[1], int_of_hex r2.[1], int_of_hex n)
+  }
+
+  | "DW" white (word as w) {
+    DW (hex w)
+  }
+  
+
   
   (* 
 
@@ -221,13 +215,6 @@ rule instruction = parse
   | SHR_V  of int
   | SHL_V  of int
 
-  (* PSEUDO *)
-  | LABEL     of string
-  | PLD_I_A   of string
-  | PCALL_A   of string
-  | PSYS_A    of string
-  | PJP_A     of string
-  | PJP_V0_A   of string
 
   (* extended *)
   | SCD of int
@@ -242,7 +229,6 @@ rule instruction = parse
   *)
 
   | eof {
-    print_endline "EOF";
     raise Eof
   }
 

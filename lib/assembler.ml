@@ -20,10 +20,14 @@ let compute_addresses il =
       end
     | _::r -> step r (pc + 2) adt
   in
-  step il 0 []
+  step il 0x200 []
 
-let assembler file =
+let print_table adt =
+  List.iter (fun (x, i) -> Printf.printf "%s - %d\n" x i) adt
+
+let assembler file out =
   let inx = open_in file in
+  let oux = open_out_bin out in
   let lexbuf = Lexing.from_channel inx in
   lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = file };
 
@@ -42,5 +46,9 @@ let assembler file =
   (* PASS - 1 *)
   let adresses_table = compute_addresses !instructions in
   (* PASS - 2 *)
-  List.iter (process_standard_instruction adresses_table) !instructions
+  List.iter (process_standard_instruction adresses_table oux) !instructions;
+  print_table adresses_table;
+
+  close_in inx;
+  close_out oux
 

@@ -46,6 +46,9 @@ type standard_set =
   | SHR_V  of int
   | SHL_V  of int
 
+  (* GRAPHIC *)
+  | DRW_V_V_N of int * int * int
+
   (* PSEUDO *)
   | LABEL     of string
   | PLD_I_A   of string
@@ -53,6 +56,7 @@ type standard_set =
   | PSYS_A    of string
   | PJP_A     of string
   | PJP_V0_A   of string
+  | DW of int
 
   (* extended *)
   | SCD of int
