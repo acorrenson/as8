@@ -1,11 +1,12 @@
-(ocamllex lexer)
+(include_subdirs unqualified)
 
 (library
   (name lib_as8)
   (public_name as8.lib_as8)
-  (modules lexer lexing_utils))
+  (modules lexer lexing_utils assembling_utils))
 
 (executable 
   (name debug)
+  (public_name debug)
   (libraries lib_as8)
   (modules debug))

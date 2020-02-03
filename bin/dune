@@ -1,7 +1,7 @@
 
-(executable
-  (name as8)
-  (public_name as8)
-  (package as8)
-  (libraries lib_as8 cmdliner)
-  (modules as8))
+; (executable
+;  (name as8)
+;  (public_name as8)
+;  (package as8)
+;  (libraries lib_as8 cmdliner)
+;   (modules as8))
